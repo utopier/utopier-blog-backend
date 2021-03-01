@@ -2,9 +2,9 @@
   "name": "utopier-blog-backend",
   "version": "1.0.0",
   "description": "utopier-blog backend rest api",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev": "cd src && nodemon --exec ts-node index.ts",
     "test": "jest --detectOpenHandles --forceExit"
   },
   "jest": {
@@ -47,7 +47,9 @@
     "hpp": "^0.2.3",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "swagger-jsdoc": "^4.3.2",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -62,6 +64,8 @@
     "@types/passport": "^1.0.6",
     "@types/passport-local": "^1.0.33",
     "@types/supertest": "^2.0.10",
+    "@types/swagger-jsdoc": "^6.0.0",
+    "@types/swagger-ui-express": "^4.1.2",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
     "@typescript-eslint/parser": "^4.15.2",
     "eslint": "^7.21.0",

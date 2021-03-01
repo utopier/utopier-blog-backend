@@ -7,10 +7,45 @@ import session from 'express-session';
 // import passport from 'passport';
 import cors from 'cors';
 
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
 import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
 
 export const app = express();
+
+// Swagger Option
+const options: swaggerJSDoc.Options = {
+  swaggerDefinition: {
+    info: { // API informations (required)
+      title: 'Utopier Blog API', // Title (required)
+      version: '1.0.0', // Version (required)
+      description: "Blog API | email : utopier2025@gmail.com | github : ...", // Description (optional)
+    },
+    host: 'localhost:2025', // Host (optional)
+    basePath: '/', // Base path (optional)
+    servers:[
+      {
+        url:"http://localhost:2025",
+        description: "Local Development Environment"
+      },
+      {
+        url:"https://aws-lambda-endpoint",
+        description: "AWS Lambda Endpoint"
+      }
+    ],
+    openapi:'3.0.0',
+    externalDocs:{
+      url: '/api-docs',
+      description: "Find more info here"
+    },
+  },
+  // Path to the API docs
+  apis: ['./routes/*.*']
+};
+const swaggerSpec = swaggerJSDoc(options);
+
 
 if (process.env.NODE_ENV === 'production') {
   app.use(logger('combined'));
@@ -67,6 +102,9 @@ app.get('/', (req, res) => {
   // express 테스트
   res.send('hello express');
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 const server = app.listen(2025, () => {
   console.log(`server start`);
