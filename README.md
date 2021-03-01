@@ -12,7 +12,7 @@
    - git remote add origin https://github.com/utopier/utopier-blog-backend.git
    - git push --set-upstream origin master
    - git push -u origin master
-2. []github + jira
+2. [O]github + jira
    - Smart Commit (JIRA + Github)
    - Jira
      - 프로젝트 만들기 (이름: utopier-blog, 키: UB, 칸반)
@@ -21,6 +21,12 @@
      - 프로젝트 -> 항목추가 -> 저장소 -> https://github.com/utopier/utopier-blog-backend.git
      - Smart Commit Test
 3. []github + slack
+   - Slack
+     - 워크스페이스 생성 (utopier-blog)
+     - App -> Github
+     - Github -> /github subscribe utopier/utopier-blog-backend -> /github subscribe list -> /github subscribe list features
+   - Github
+     - Accout Settings -> Applications -> Slack -> Repository access
 4. []jira + slack
 5. []Software Process(git-flow, agile)
 
