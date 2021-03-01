@@ -104,7 +104,16 @@
      - Preferences > Settings > Workspace > Editor: Format On Save(파일 저장시 자동 포맷팅)
        - .vscode/settings.json
      - Prettier 적용확인(Ctrl + S)
-4. []testing(jest)
+4. [O]testing(jest)
+   - JavaScript Test
+     - npm i -D jest
+     - package.json script 수정
+     - {파일이름}.test.js
+     - Truthiness, Common Matchers, async / await, Callback, test, describe
+   - TypeScript Express Test
+     - npm i -D ts-jest supertest @types/jest
+     - package.json script 수정
+     - {파일이름}.test.ts or {파일이름}.test.js
 5. []swagger-ui
    - npm i swagger-jsdoc swagger-ui-express
    - npm i -D @types/swagger-jsdoc @types/swagger-ui-express

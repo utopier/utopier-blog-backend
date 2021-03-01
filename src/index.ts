@@ -10,7 +10,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
 
-const app = express();
+export const app = express();
 
 if (process.env.NODE_ENV === 'production') {
   app.use(logger('combined'));
@@ -18,8 +18,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
   app.use(
     cors({
-      origin: 'http://nodebird.com',
-      credentials: true,
+      // origin: '',
+      // credentials: true,
     })
   );
 } else {
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
   console.log(`sessionId : ${req.sessionID}`);
   // res.cookie('name', 'utopier');
   // redis 테스트
-  // redisClient.set('name', 'zerocho');
+  // redisClient.set('name', 'utopier');
   // redisClient.get('name', (_err: any, reply: any) => {
   //   console.log(reply);
   // });
