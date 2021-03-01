@@ -2,10 +2,16 @@
 
 ## 1. github, jira, slack, confluence
 
-1. []github
+1. [O]github
    - Git Hosting Service로 github 사용
-   - Repository 생성
+   - New Repository 생성
      - https://github.com/utopier/utopier-blog-backend.git
+   - git init
+   - git add .
+   - git commit -m 'First Commit'
+   - git remote add origin https://github.com/utopier/utopier-blog-backend.git
+   - git push --set-upstream origin master
+   - git push -u origin master
 2. []github + jira
 3. []github + slack
 4. []jira + slack
