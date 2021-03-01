@@ -13,8 +13,16 @@
    - git push --set-upstream origin master
    - git push -u origin master
 2. []github + jira
+   - Smart Commit (JIRA + Github)
+   - Jira
+     - 프로젝트 만들기 (이름: utopier-blog, 키: UB, 칸반)
+     - App -> Github for Jira
+     - 앱관리 -> Github -> Configuration
+     - 프로젝트 -> 항목추가 -> 저장소 -> https://github.com/utopier/utopier-blog-backend.git
+     - Smart Commit Test
 3. []github + slack
 4. []jira + slack
+5. []Software Process(git-flow, agile)
 
 ## 2. Nodejs + Express(+ Middlewares) + Ts + Linting + Testing + Swagger UI
 
