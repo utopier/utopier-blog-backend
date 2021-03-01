@@ -1,13 +1,13 @@
-const express = require('express');
-const logger = require('morgan');
-const hpp = require('hpp');
-const helmet = require('helmet');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-// const passport = require('passport');
-const cors = require('cors');
+import express from 'express';
+import logger from 'morgan';
+import hpp from 'hpp';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+// import passport from 'passport';
+import cors from 'cors';
 
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
 
 const app = express();

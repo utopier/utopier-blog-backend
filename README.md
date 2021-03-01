@@ -81,9 +81,10 @@
    - .env
    - package.json script 수정
    - src/index.js 초기 코드 작성 후 start
-2. []typesscript
+2. [O]typesscript
    - npm i -D typescript ts-node
    - npm i -D @types/node @types/express @types/express-session @types/cookie-parser @types/cors @types/morgan @types/passport @types/passport-local @types/bcrypt @types/hpp
+   - tsconfig.json
    - package.json script 수정
 3. []linting
 4. []testing
