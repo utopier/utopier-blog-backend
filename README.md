@@ -114,19 +114,31 @@
      - npm i -D ts-jest supertest @types/jest
      - package.json script 수정
      - {파일이름}.test.ts or {파일이름}.test.js
-5. []swagger-ui
+5. [O]swagger-ui
    - npm i swagger-jsdoc swagger-ui-express
    - npm i -D @types/swagger-jsdoc @types/swagger-ui-express
    - tsconfig.json
 
 ## 3. DB Modeling
 
-1. []DB Diagram
+1. []DB Diagram(ERD,sqlDBM)
 
 ## 4. ORM + Database
 
-1. []Local Database
-2. []ORM
+1. []Local Database(MySQL, Redis)
+2. [O]ORM(TypeORM)
+   - **설치**
+     - npm i typeorm
+     - npm i mysql
+     - ts version 3.3이상, tsconfig.json 옵션 켜기
+   - **Connection**
+     - touch src/ormconfig.ts
+     - connection option 정의
+     - index.ts에서 mysql connection
+   - **Entities**
+     - mkdir src/entities
+       - User, Post, Comment, Image, Tag, Subscription
+   - **Relations**
 
 ## 5. API Development with Postman, Swagger Doc, Lambda Function
 

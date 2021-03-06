@@ -7,6 +7,8 @@ import session from 'express-session';
 // import passport from 'passport';
 import cors from 'cors';
 
+import {createConnection} from 'typeorm'
+
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
@@ -47,6 +49,21 @@ const options: swaggerJSDoc.Options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 
+const connectionOptions = require('./ormconfig');
+
+// MySQL 연결
+
+// const connection = await createConnection(connectionOptions)
+createConnection(connectionOptions)
+  .then(() => {
+    console.log('MySQL 연결 성공');
+  })
+  .catch((err: any) => {
+    console.log('MySQL 연결 오류 ' + err);
+  });
+
+
+// Middleware 적용
 if (process.env.NODE_ENV === 'production') {
   app.use(logger('combined'));
   app.use(hpp());
