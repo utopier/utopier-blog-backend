@@ -157,6 +157,15 @@
 3. []CircleCI + Slack
 4. []CircleCI + JIRA
 
-## 7. Serverless + AWS
-
-1. []Serverless Framework + AWS
+## 7. AWS Deployment
+1. [O]EC2 서버 생성 및 접속
+  - AWS Console -> EC2 생성
+  - 탄력적 IP 연결
+  - puttygen으로 ppk 파일 생성
+  - MobaXterm으로 인스턴스 접속
+2. [O] Install Package In EC2
+  - Nodejs
+  - Git
+  - pm2
+3. [] Express RestAPI 서버에 올리기
+4. [] Auto Deploment with CircleCI
