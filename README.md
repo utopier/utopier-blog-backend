@@ -190,8 +190,10 @@
   - edit /etc/nginx/nginx.conf
   - AWS Console -> EC2 -> Security Group -> 80포트 접근 허용
   - Browser에서 EC2 Public IP로 접속
-- [] Deploy Express RestAPI in EC2
-- [] API Gateway with EC2
+- [O] Deploy Express RestAPI in EC2
+  - git clone
+  - npm install
+  - https://hoontae24.github.io/posts/10
 - [] S3
 - [] CloudWatch
 - [] Slack bot
