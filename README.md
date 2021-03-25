@@ -150,6 +150,54 @@
   - [] Lambda Function
   - [] Lambda Local Test
 
+## 7. AWS Deployment
+
+1. [O]EC2 서버 생성 및 접속
+
+- AWS Console -> EC2 생성
+- 탄력적 IP 연결
+- puttygen으로 ppk 파일 생성
+- MobaXterm으로 인스턴스 접속
+
+2. [O] Install Package In EC2
+
+- Nodejs
+- Git
+- pm2
+- Redis
+
+3. [] Express RestAPI 서버에 올리기
+
+- [O] RDS
+  - RDS Instance 생성
+  - VPC 보안 그룹
+    - Local MySQL Workbench에서 접속
+    - EC2 Instance에서 접속
+  - .env DB Setting
+  - Local Dev Server Start (DB랑 연결되는지 확인)
+- [O] Install Redis In EC2
+  - sudo yum install redis
+  - sudo systemctl start redis
+  - sudo systemctl enable redis
+  - ps -e
+  - ps -ef | grep redis
+- [O] Install Enginx
+  - sudo dnf install nginx
+  - sudo systemctl start nginx
+  - sudo systemctl enable nginx
+  - ps -ef | grep nginx
+  - sudo netstat -ntlp
+  - edit /etc/nginx/nginx.conf
+  - AWS Console -> EC2 -> Security Group -> 80포트 접근 허용
+  - Browser에서 EC2 Public IP로 접속
+- [] Deploy Express RestAPI in EC2
+- [] API Gateway with EC2
+- [] S3
+- [] CloudWatch
+- [] Slack bot
+
+4. [] Auto Deploment with CircleCI, CodeDeploy, CodePipeline
+
 ## 6. CICD Pipeline
 
 1. []CircleCI Pipeline
@@ -157,15 +205,6 @@
 3. []CircleCI + Slack
 4. []CircleCI + JIRA
 
-## 7. AWS Deployment
-1. [O]EC2 서버 생성 및 접속
-  - AWS Console -> EC2 생성
-  - 탄력적 IP 연결
-  - puttygen으로 ppk 파일 생성
-  - MobaXterm으로 인스턴스 접속
-2. [O] Install Package In EC2
-  - Nodejs
-  - Git
-  - pm2
-3. [] Express RestAPI 서버에 올리기
-4. [] Auto Deploment with CircleCI
+---
+
+## API Features

@@ -6,6 +6,10 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 // import passport from 'passport';
 import cors from 'cors';
+import connectRedis from 'connect-redis';
+const RedisStore = connectRedis(session);
+import redis from 'redis';
+
 
 import {createConnection} from 'typeorm'
 
@@ -51,8 +55,16 @@ const swaggerSpec = swaggerJSDoc(options);
 
 const connectionOptions = require('./ormconfig');
 
-// MySQL 연결
+// Redis 연결
+export const redisClient = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: 6379,
+  password: process.env.REDIS_PASSWORD
+});
 
+console.log(redisClient)
+
+// MySQL 연결
 // const connection = await createConnection(connectionOptions)
 createConnection(connectionOptions)
   .then(() => {
