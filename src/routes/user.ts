@@ -1227,4 +1227,82 @@ router.get(
   );
     
 
+/**
+ * @swagger
+ * /user/{userId}/posts:
+ *   get:
+ *     summary: Get User PostList
+ *     description: Get User PostList
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *           example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+ *         required: true
+ *     responses:
+ *       '200':
+ *         description: User Data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items: 
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: b7191cd9-cc54-4251-863a-17269355223f
+ *                   createdDate:
+ *                     type: string
+ *                     format: date-time
+ *                     example: 2020-12-10T05:06:17.969Z
+ *                   updatedDate:
+ *                     type: string
+ *                     format: date-time
+ *                     example: 2020-12-10T05:06:17.969Z
+ *                   title:
+ *                     type: string
+ *                     example: swagger
+ *                   content:
+ *                     type: string
+ *                     example: blahh.....
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '403':
+ *         description: No Existing User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 사용자
+ */
+ router.get('/:userId/posts', async (req: any, res, next) => {
+    // GET /user/{userId}/posts
+    try {
+      const posts = await User.createQueryBuilder()
+        .relation(User, 'posts')
+        .of(req.user.id)
+        .loadMany();
+      res.status(200).json(posts);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  });
+  
+
 export default router;

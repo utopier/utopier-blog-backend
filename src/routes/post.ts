@@ -416,4 +416,259 @@ try {
   );
   
 
+/**
+ * @swagger
+ * /post/{postId}:
+ *   get:
+ *     summary: Get Post Data
+ *     description: Get post Data
+ *     tags:
+ *       - Post
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: postId
+ *         schema:
+ *           type: string
+ *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+ *     requestBody:
+ *       description: Update Post Data
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/requestBody/newPost'
+ *     responses:
+ *       '200':
+ *         description: Post Data Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/postData'
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '404':
+ *         description: Not Found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 게시글
+ */
+ router.get(
+    '/:postId',
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // GET /post/{postId}
+      console.log('req.params: ', req.params);
+      try {
+        const post = await Post.findOne({
+          where: { id: req.params.postId },
+        });
+        if (!post) {
+          return res.status(404).send('존재하지 않는 게시글');
+        }
+        const fullPost = await Post.getRepository().findOne({
+          where: { id: post.id },
+          relations: [
+            'author',
+            'comments',
+            'comments.user',
+            'tags',
+            'mainImgUrl',
+            'likers',
+          ],
+        });
+        res.status(200).json(fullPost);
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /post/{postId}:
+   *   patch:
+   *     summary: Update Post Data
+   *     description: Update post Data
+   *     tags:
+   *       - Post
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: postId
+   *         schema:
+   *           type: string
+   *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+   *     responses:
+   *       '200':
+   *         description: Post Data Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/postData'
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '404':
+   *         description: Not Found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 게시글
+   */
+  router.patch('/:postId', isLoggedIn, async (req, res, next) => {
+    // PATCH /post/{postId}
+    try {
+      let newPost;
+      newPost = await Post.update(
+        {
+          id: req.params.postId,
+        },
+        {
+          title: req.body.title,
+          content: req.body.content,
+        }
+      );
+      console.log('newPost : ', newPost);
+      if (Array.isArray(req.body.tags)) {
+        await Promise.all(
+          req.body.tags.map(async (tagName: string) => {
+            const extTag = await Tag.findOne({
+              name: tagName,
+            });
+            if (extTag) {
+              await Post.createQueryBuilder()
+                .relation(Post, 'tags')
+                .of(req.params.postId)
+                .add(extTag.id);
+            } else {
+              const newTag: any = await Tag.insert({
+                name: tagName,
+              });
+              console.log(newTag);
+              newPost = await Post.createQueryBuilder()
+                .relation(Post, 'tags')
+                .of(req.params.postId)
+                .add(newTag.identifiers[0].id);
+            }
+          })
+        );
+      } else {
+        const extTag = await Tag.findOne({
+          name: req.body.tags,
+        });
+        if (extTag) {
+          await Post.createQueryBuilder()
+            .relation(Post, 'tags')
+            .of(req.params.postId)
+            .add(extTag.id);
+        } else {
+          const newTag: any = await Tag.insert({
+            name: req.body.tags,
+          });
+          newPost = await Post.createQueryBuilder()
+            .relation(Post, 'tags')
+            .of(req.params.postId)
+            .add(newTag.identifiers[0].id);
+        }
+      }
+      if (req.body.mainImgUrl) {
+        const image: any = await Image.insert({ src: req.body.mainImgUrl });
+        console.log('prev img update : ', newPost)
+        newPost = await Post.createQueryBuilder()
+          .relation(Post, 'mainImgUrl')
+          .of(req.params.postId)
+          .set(image.identifiers[0].id);
+        console.log('img update : ', newPost)
+      }
+      res.status(200).json({
+        postId: req.params.postId,
+        newPost,
+      });
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  });
+  
+  /**
+   * @swagger
+   * /post/{postId}:
+   *   delete:
+   *     summary: Delete Post
+   *     description: Delte Post 
+   *     tags:
+   *       - Post
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: postId
+   *         schema:
+   *           type: string
+   *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+   *     responses:
+   *       '200':
+   *         description: Delete Post Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 postId:
+   *                   type: string
+   *                   description: deleted Post
+   *                   example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '404':
+   *         description: Not Found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: postId에 일치하는 포스트가 없음
+   */
+  router.delete('/:postId', isLoggedIn, async (req, res, next) => {
+    // DELETE /post/{postId}
+    try {
+      const deletedPost = await Post.delete({
+        id: req.params.postId,
+      });
+      if(deletedPost.affected){
+        res.status(200).json({ postId: req.params.postId });
+      } else {
+        res.status(404).send('postId에 일치하는 포스트가 없음')
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  });
+  
+
 export default router;

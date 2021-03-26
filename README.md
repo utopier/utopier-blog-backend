@@ -237,7 +237,8 @@
 - [O..] Get /user/{userId} Get User Data
   follow, followings User Data정리 (비번 등)
 
-- [] Get /user/{userId}/posts Get User PostList
+- [O..] Get /user/{userId}/posts Get User PostList
+  response data 정리
 
 2. Users
 
