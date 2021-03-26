@@ -274,8 +274,8 @@
 
 5. Tags
 
-- [] Get /tags Get Tag List
-- [] Get /tags/search Get Tag List
+- [O] Get /tags Get Tag List
+- [O] Get /tags/search Get Tag List
 
 6. Subscription
 
