@@ -511,5 +511,139 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /user/nickname:
+ *   patch:
+ *     summary: Update User Nickname
+ *     description: Update User Nickname
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *     requestBody:
+ *       description: New Nickname
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nickname:
+ *                 type: string
+ *                 example: newNickname
+ *     responses:
+ *       '200':
+ *         description: Nickname Update Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 nickname:
+ *                   type: string
+ *                   example: newNickname
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ */
+
+ router.patch(
+    '/nickname',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // PATCH /user/nickname
+      try {
+        // UPDATE user SET nickname = 'sqlupdate', updatedDate = CURRENT_TIMESTAMP WHERE id = 'db16d68a-47c5-4362-8535-02ad9d2f5806'
+        await User.update(
+          { id: req.user.id },
+          {
+            nickname: req.body.nickname,
+          }
+        );
+        res.status(200).json({ nickname: req.body.nickname });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /user/bio:
+   *   patch:
+   *     summary: Update User bio
+   *     description: Update User bio
+   *     tags:
+   *       - User
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *     requestBody:
+   *       description: New Bio
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               bio:
+   *                 type: string
+   *                 example: newBio
+   *     responses:
+   *       '200':
+   *         description: Bio Update Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 bio:
+   *                   type: string
+   *                   example: newBio
+   *       '400':
+   *         description: Bad Request
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   */
+  router.patch(
+    '/bio',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // PATCH /user/bio
+      try {
+        // UPDATE user SET bio = 'sqlupdate', updatedDate = CURRENT_TIMESTAMP WHERE id = 'db16d68a-47c5-4362-8535-02ad9d2f5806'
+        await User.update(
+          { id: req.user.id },
+          {
+            bio: req.body.bio,
+          }
+        );
+        res.status(200).json({ bio: req.body.bio });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  
 
 export default router;

@@ -219,8 +219,8 @@
 - [O] Post /user/logout logout
 - [O] Get /user Get Me Data
 
-- [] Patch /user/nickname Update User NickName
-- [] Patch /user/bio Update User bio
+- [O] Patch /user/nickname Update User NickName
+- [O] Patch /user/bio Update User bio
 
 - [] Post /user/images Update User Avatar
 - [] Delete /user/images Delete User Avatar
