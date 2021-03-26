@@ -4,8 +4,11 @@ import bcrypt from 'bcrypt';
 import passport from 'passport';
 
 import { isLoggedIn, isNotLoggedIn } from '../utils/middlewares';
+import { upload, s3 } from './post';
 
-import User from '../entities/User'
+import User from '../entities/User';
+import Image from '../entities/Image';
+
 
 /**
  * @swagger
@@ -643,7 +646,135 @@ router.get(
       }
     }
   );
+
+/**
+ * @swagger
+ * /user/images:
+ *   post:
+ *     summary: Update User Avatar
+ *     description: Update User Avatar, multer s3 upload
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *     requestBody:
+ *       description: User Avatar Image
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               filename:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       '201':
+ *         description: Avatar Update Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 avatarUrl:
+ *                   type: string
+ *                   example: aws s3 endpoint
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ */
+ router.post(
+    '/images',
+    isLoggedIn,
+    upload.array('image'),
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+        console.log('images post router req : ', req.files[0])
+      // POST /user/images
+      // INSERT INTO image (id, src) VALUES ('ahewuohoi13', 'https://.../.../..')
+      const image: any = await Image.insert({ src: req.files[0].location });
+      // UPDATE user SET avatarId = 'imageId', updatedDate = CURRENT_TIMESTAMP WHERE id IN 'userId'
+      await User.createQueryBuilder()
+        .relation(User, 'avatar')
+        .of(req.user.id)
+        .set(image.identifiers[0].id);
+      res.status(201).json(req.files[0].location);
+    }
+  );
   
+  /**
+   * @swagger
+   * /user/images:
+   *   delete:
+   *     summary: Delete User Avatar
+   *     description: Delete User Avatar
+   *     tags:
+   *       - User
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: query
+   *         name: imgPath
+   *         schema:
+   *           type: string
+   *           example: http://aws-s3-endpoint
+   *     responses:
+   *       '200':
+   *         description: Avatar Delete Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 avatarUrl:
+   *                   type: string
+   *                   example: newBio
+   *       '400':
+   *         description: Bad Request
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   */
+  router.delete(
+    '/images',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // DELETE /post/image
+      s3.deleteObject(
+        {
+          Bucket: 'utopier-blog-dev-storage', // 사용자 버켓 이름
+          Key: req.query.imgPath, // 버켓 내 경로
+        },
+        (err, data) => {
+          if (err) {
+            throw err;
+          }
+        }
+      );
+      // DELETE FROM image from WHERE src = 'req.params.imgPath'
+      await Image.delete({ src: req.params.imgPath });
+      // UPDATE user SET avatarId = null, updatedDate = CURRENT_TIMESRAMP WHERE id IN 'userId'
+      await User.createQueryBuilder()
+        .relation(User, 'avatar')
+        .of(req.user.id)
+        .set(null);
+      res.json(req.body.imgPath);
+    }
+  );
   
 
 export default router;

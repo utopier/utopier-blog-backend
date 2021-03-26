@@ -222,8 +222,8 @@
 - [O] Patch /user/nickname Update User NickName
 - [O] Patch /user/bio Update User bio
 
-- [] Post /user/images Update User Avatar
-- [] Delete /user/images Delete User Avatar
+- [O..] Post /user/images Update User Avatar
+- [O..] Delete /user/images Delete User Avatar
 
 - [] Patch /user/{userId}/follow User Follow
 - [] Delete /user/{userId}/follow User Unfollow
