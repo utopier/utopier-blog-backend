@@ -925,6 +925,145 @@ try {
       }
     }
   );
+
+/**
+ * @swagger
+ * /post/{postId}/like:
+ *   patch:
+ *     summary: Create Post Like
+ *     description: Create Post Like
+ *     tags:
+ *       - Post
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: postId
+ *         schema:
+ *           type: string
+ *           example: b7191cd9-cc54-4251-863a-17269355223f
+ *     responses:
+ *       '201':
+ *         description: Create Post Like Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 postId:
+ *                   type: string
+ *                   example: b7191cd9-cc54-4251-863a-17269355223f 
+ *                 userId:
+ *                   type: string
+ *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '403':
+ *         description: Not exiting
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 게시글
+ */
+ router.patch(
+    '/:postId/like',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // GET /post/{postId}/like
+      try {
+        const post = await Post.findOne({ where: { id: req.params.postId } });
+        if (!post) {
+          return res.status(403).send('존재하지 않는 게시글');
+        }
+        await Post.createQueryBuilder()
+          .relation(Post, 'likers')
+          .of(post.id)
+          .add(req.user.id);
+        res.status(201).json({ postId: req.params.postId, userId: req.user.id });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /post/{postId}/like:
+   *   delete:
+   *     summary: Delete Post Like
+   *     description: Delete Post Like
+   *     tags:
+   *       - Post
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: postId
+   *         schema:
+   *           type: string
+   *           example: b7191cd9-cc54-4251-863a-17269355223f
+   *     responses:
+   *       '200':
+   *         description: Delete Post Like Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 postId:
+   *                   type: string
+   *                   example: b7191cd9-cc54-4251-863a-17269355223f 
+   *                 userId:
+   *                   type: string
+   *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: Not exiting
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 게시글
+   */
+  router.delete(
+    '/:postId/like',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // DELETE /post/{postId}/like
+      try {
+        const post = await Post.findOne({ where: { id: req.params.postId } });
+        if (!post) {
+          return res.status(403).send('존재하지 않는 게시글');
+        }
+        await Post.createQueryBuilder()
+          .relation(Post, 'likers')
+          .of(post.id)
+          .remove(req.user.id);
+        res.json({ postId: req.params.postId, userId: req.user.id });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
   
 
 export default router;

@@ -263,8 +263,8 @@
 - [O] Post /post/{postId}/comment/{commentId} Create Post Comment
 - [O] Delete /post/{postId}/comment/{commentId}/ Delete Post Comment
 
-- [] Patch /post/{postId}/like Create Post Like
-- [] Delete /post/{postId}/like Delete Post Like
+- [O] Patch /post/{postId}/like Create Post Like
+- [O] Delete /post/{postId}/like Delete Post Like
 
 4. Posts
 
