@@ -19,6 +19,7 @@ import swaggerUi from 'swagger-ui-express';
 
 import userRouter from './routes/user';
 import usersRouter from './routes/users';
+import postRouter from './routes/post';
 
 import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
@@ -151,6 +152,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/user', userRouter);
 app.use('/users', usersRouter);
+app.use('/post', postRouter);
 
 const server = app.listen(2025, () => {
   console.log(`server start`);

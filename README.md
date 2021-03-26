@@ -246,13 +246,19 @@
 
 3. Post
 
-- [] Post /post Create Post
+- [O..] Post /post Create Post
+  User 비번 삭제
+- [O] Post /post/images
+- [O] Delete /post/images
+
 - [] Get /post/{postId} Get Post Data
 - [] Patch /post/{postId} Update Post Data
 - [] Delete /post/{postId} Delete Post
+
 - [] Post /post/{postId}/comment Create Post Comment
 - [] Post /post/{postId}/comment/{commentId} Create Post Comment
 - [] Delete /post/{postId}/comment/{commentId}/ Delete Post Comment
+
 - [] Patch /post/{postId}/like Create Post Like
 - [] Delete /post/{postId}/like Delete Post Like
 
