@@ -268,9 +268,9 @@
 
 4. Posts
 
-- [] Get /posts Get Post List
-- [] Get /posts/search Get Post Searched List
-- [] Get /posts/{tagId} Get Post List
+- [O] Get /posts Get Post List
+- [O] Get /posts/search Get Post Searched List
+- [O..] Get /posts/{tagId} Get Post List
 
 5. Tags
 
