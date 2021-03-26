@@ -252,9 +252,12 @@
 - [O] Post /post/images
 - [O] Delete /post/images
 
-- [] Get /post/{postId} Get Post Data
-- [] Patch /post/{postId} Update Post Data
-- [] Delete /post/{postId} Delete Post
+- [O..] Get /post/{postId} Get Post Data
+  Author User Password Delete
+- [O..] Patch /post/{postId} Update Post Data
+  Update Tag
+- [O..] Delete /post/{postId} Delete Post
+  Delete Tag & MainImg
 
 - [] Post /post/{postId}/comment Create Post Comment
 - [] Post /post/{postId}/comment/{commentId} Create Post Comment
