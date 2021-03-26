@@ -4,17 +4,20 @@ import hpp from 'hpp';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-// import passport from 'passport';
+import passport from 'passport';
 import cors from 'cors';
 import connectRedis from 'connect-redis';
 const RedisStore = connectRedis(session);
 import redis from 'redis';
 
+import passportConfig from './utils/passport';``
 
 import {createConnection} from 'typeorm'
 
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+
+import userRouter from './routes/user';
 
 import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
@@ -74,6 +77,7 @@ createConnection(connectionOptions)
     console.log('MySQL 연결 오류 ' + err);
   });
 
+passportConfig();
 
 // Middleware 적용
 if (process.env.NODE_ENV === 'production') {
@@ -96,6 +100,13 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 
+// parse application/json
+app.use(
+  express.json({
+    limit: '50mb',
+  })
+);
+// parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser('Rs89I67YEA55cLMgi0t6oyr8568e6KtD'));
 app.use(
@@ -104,7 +115,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     name: 'sessionId',
-    //store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: redisClient }),
     cookie: {
       httpOnly: true,
       secure: false,
@@ -113,6 +124,9 @@ app.use(
     },
   })
 );
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get('/', (req, res) => {
   // cookie parser 테스트
@@ -134,6 +148,7 @@ app.get('/', (req, res) => {
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+app.use('/user', userRouter);
 
 const server = app.listen(2025, () => {
   console.log(`server start`);

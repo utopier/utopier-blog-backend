@@ -194,11 +194,12 @@
   - git clone
   - npm install
   - https://hoontae24.github.io/posts/10
-- [] S3
-- [] CloudWatch
-- [] Slack bot
 
 4. [] Auto Deploment with CircleCI, CodeDeploy, CodePipeline
+
+- [] CircleCI, S3, CodeDeploy, CodePipeLine, CloudWatch, SlackBot
+  - git push -> Github -> Git Clone -> CircleCI (git clone & build)
+  - CircleCI(Build & Upload) -> S3 -> Create Deployment -> CodeDeploy -> Deploy -> EC2
 
 ## 6. CICD Pipeline
 
@@ -210,3 +211,53 @@
 ---
 
 ## API Features
+
+1. User
+
+- [O] Post /user Sign Up
+- [] Post /user/login login
+- [] Post /user/logout logout
+- [] Get /user Get Me Data
+- [] Patch /user/nickname Update User NickName
+- [] Patch /user/bio Update User bio
+- [] Post /user/images Update User Avatar
+- [] Delete /user/images Delete User Avatar
+- [] Patch /user/{userId}/follow User Follow
+- [] Delete /user/{userId}/follow User Unfollow
+- [] Delete /user/follower/{userId} Delete User Follwoer
+- [] Get /user/followers Get User Followers
+- [] Get /user/followings Get User Followings
+- [] Get /user/{userId} Get User Data
+- [] Get /user/{userId}/posts Get User PostList
+
+2. Users
+
+- [] Get /users Get User List
+- [] Get /users/search Get User List
+
+3. Post
+
+- [] Post /post Create Post
+- [] Get /post/{postId} Get Post Data
+- [] Patch /post/{postId} Update Post Data
+- [] Delete /post/{postId} Delete Post
+- [] Post /post/{postId}/comment Create Post Comment
+- [] Post /post/{postId}/comment/{commentId} Create Post Comment
+- [] Delete /post/{postId}/comment/{commentId}/ Delete Post Comment
+- [] Patch /post/{postId}/like Create Post Like
+- [] Delete /post/{postId}/like Delete Post Like
+
+4. Posts
+
+- [] Get /posts Get Post List
+- [] Get /posts/search Get Post Searched List
+- [] Get /posts/{tagId} Get Post List
+
+5. Tags
+
+- [] Get /tags Get Tag List
+- [] Get /tags/search Get Tag List
+
+6. Subscription
+
+- [] Post /subscription
