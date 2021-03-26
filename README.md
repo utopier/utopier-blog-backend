@@ -217,17 +217,22 @@
 - [O] Post /user Sign Up
 - [O] Post /user/login login
 - [O] Post /user/logout logout
-- [] Get /user Get Me Data
+- [O] Get /user Get Me Data
+
 - [] Patch /user/nickname Update User NickName
 - [] Patch /user/bio Update User bio
+
 - [] Post /user/images Update User Avatar
 - [] Delete /user/images Delete User Avatar
+
 - [] Patch /user/{userId}/follow User Follow
 - [] Delete /user/{userId}/follow User Unfollow
 - [] Delete /user/follower/{userId} Delete User Follwoer
 - [] Get /user/followers Get User Followers
 - [] Get /user/followings Get User Followings
+
 - [] Get /user/{userId} Get User Data
+
 - [] Get /user/{userId}/posts Get User PostList
 
 2. Users

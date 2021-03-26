@@ -446,4 +446,70 @@ import User from '../entities/User'
     });
   });
 
+  /**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Get Me Data
+ *     description: Get me User Data for init Redux Store
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *     responses:
+ *       '200':
+ *         description: Logout User Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/userDataWithoutPassword'
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ */
+router.get(
+  '/',
+  isLoggedIn,
+  async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    // GET /user
+    try {
+      if (req.user) {
+        // SELECT * FROM user WHERER id = "req.user.id"
+        // LEFT JOIN, ON
+        const fullUserWithoutPassword = await User.getRepository().findOne({
+          where: { id: req.user.id},
+          select: ['id', 'email', 'nickname', 'bio'],
+          relations: [
+            'avatar',
+            'posts',
+            'posts.comments',
+            'posts.tags',
+            'posts.likers',
+            'posts.author',
+            'posts.mainImgUrl',
+            'comments',
+            'likeposts',
+            'followings',
+            'followers',
+          ],
+        });
+        res.status(200).json(fullUserWithoutPassword);
+      } else {
+        res.status(200).json(null);
+      }
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  }
+);
+
+
 export default router;
