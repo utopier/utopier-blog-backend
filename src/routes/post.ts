@@ -671,4 +671,260 @@ try {
   });
   
 
+/**
+ * @swagger
+ * /post/{postId}/comment:
+ *   post:
+ *     summary: Create Post Comment
+ *     description: Create Post Comment
+ *     tags:
+ *       - Post
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: postId
+ *         schema:
+ *           type: string
+ *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+ *     requestBody:
+ *       description: Update Post Comment
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 example: create comment test
+ *     responses:
+ *       '201':
+ *         description: Create Post Comment Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/commentData'
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '403':
+ *         description: Not exiting
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 게시글
+ */
+ router.post(
+    '/:postId/comment',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // POST /post/{postId}/comment
+      try {
+        const post = await Post.findOne({
+          where: { id: req.params.postId },
+        });
+        if (!post) {
+          return res.status(403).send('존재하지 않는 게시글입니다.');
+        }
+        const comment = await Comment.insert({
+          content: req.body.content,
+        });
+        await User.createQueryBuilder()
+          .relation(User, 'comments')
+          .of(req.user.id)
+          .add(comment.identifiers[0].id);
+        await Post.createQueryBuilder()
+          .relation(Post, 'comments')
+          .of(post.id)
+          .add(comment.identifiers[0].id);
+  
+        const fullComment = await Comment.getRepository().findOne({
+          where: { id: comment.identifiers[0].id },
+          relations: ['user', 'post'],
+        });
+        res.status(201).json(fullComment);
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  
+  /**
+   * @swagger
+   * /post/{postId}/comment/{commentId}:
+   *   post:
+   *     summary: Create Post Comment
+   *     description: Create Post Comment
+   *     tags:
+   *       - Post
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: postId
+   *         schema:
+   *           type: string
+   *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+   *       - in: path
+   *         name: commentId
+   *         schema: 
+   *           type: string
+   *           example: dec35a5f-fb1f-49cf-8c95-9a669816963c
+   *     requestBody:
+   *       description: Update Post Comment
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               content:
+   *                 type: string
+   *                 example: update comment test
+   *     responses:
+   *       '201':
+   *         description: Update Post Comment Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: string
+   *                   example: dec35a5f-fb1f-49cf-8c95-9a669816963c 
+   *                 content:
+   *                   type: string
+   *                   example: update comment test
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: Not exiting
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 게시글
+   */
+  router.patch(
+    '/:postId/comment/:commentId',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // PATCH /post/{postId}/comment/:commentId
+      try {
+        await Comment.update(
+          { id: req.params.commentId },
+          {
+            content: req.body.content,
+          }
+        );
+        res
+          .status(200)
+          .json({ id: req.params.commentId, content: req.body.content });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /post/{postId}/comment/{commentId}:
+   *   delete:
+   *     summary: Delete Post Comment
+   *     description: Delete Post Comment
+   *     tags:
+   *       - Post
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: postId
+   *         schema:
+   *           type: string
+   *           example: 10c23bc2-1910-4a46-9b1c-a9bfde1701ea
+   *       - in: path
+   *         name: commentId
+   *         schema: 
+   *           type: string
+   *           example: dec35a5f-fb1f-49cf-8c95-9a669816963c
+   *     responses:
+   *       '200':
+   *         description: Update Post Comment Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 postId:
+   *                   type: string
+   *                   example: b7191cd9-cc54-4251-863a-17269355223f 
+   *                 commentId:
+   *                   type: string
+   *                   example: dec35a5f-fb1f-49cf-8c95-9a669816963c
+   *                 userId:
+   *                   type: string
+   *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: Not exiting
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 댓글
+   */
+  router.delete(
+    '/:postId/comment/:commentId',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // DELETE /post/{postId}/comment/:commentId
+      try {
+        const comment = await Comment.findOne({
+          where: { id: req.params.commentId, user: { id: req.user.id } },
+        });
+        if (!comment) {
+          return res.status(403).send('존재하지 않는 댓글');
+        }
+        await Comment.createQueryBuilder()
+          .relation(Comment, 'post')
+          .of(comment.id)
+          .set(null);
+        await Comment.delete({ id: comment.id });
+        res.status(200).json({
+          postId: req.params.postId,
+          commentId: req.params.commentId,
+          userId: req.user.id,
+        });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+
 export default router;

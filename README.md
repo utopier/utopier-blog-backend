@@ -259,9 +259,9 @@
 - [O..] Delete /post/{postId} Delete Post
   Delete Tag & MainImg
 
-- [] Post /post/{postId}/comment Create Post Comment
-- [] Post /post/{postId}/comment/{commentId} Create Post Comment
-- [] Delete /post/{postId}/comment/{commentId}/ Delete Post Comment
+- [O] Post /post/{postId}/comment Create Post Comment
+- [O] Post /post/{postId}/comment/{commentId} Create Post Comment
+- [O] Delete /post/{postId}/comment/{commentId}/ Delete Post Comment
 
 - [] Patch /post/{postId}/like Create Post Like
 - [] Delete /post/{postId}/like Delete Post Like
