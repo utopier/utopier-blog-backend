@@ -1144,5 +1144,87 @@ router.get(
     }
   );
   
-  
+
+/**
+ * @swagger
+ * /user/{userId}:
+ *   get:
+ *     summary: Get User Data
+ *     description: Get User Data
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *           example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+ *         required: true
+ *     responses:
+ *       '200':
+ *         description: User Data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: /#components/responses/userData
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '403':
+ *         description: No Existing User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 사용자
+ */
+ router.get(
+    '/:userId',
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // GET /user/{userId}
+      try {
+        // SELECT id, email, nickname FROM user WHERE id = "req.params.userId"
+        const fullUserWithoutPassword: any = await User.getRepository().findOne({
+          where: { id: req.params.userId },
+          select: ['id', 'email', 'nickname'],
+          relations: [
+            'posts',
+            'posts.comments',
+            'posts.tags',
+            'posts.likers',
+            'posts.author',
+            'posts.mainImgUrl',
+            'comments',
+            'likeposts',
+            'followings',
+            'followers',
+          ],
+        });
+        if (fullUserWithoutPassword) {
+          console.log(fullUserWithoutPassword);
+          // data.Posts = data.Posts.length; // 개인정보 침해 예방
+          // data.Followers = data.Followers.length;
+          // data.Followings = data.Followings.length;
+          res.status(200).json(fullUserWithoutPassword);
+        } else {
+          res.status(403).json('존재하지 않는 사용자');
+        }
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+    
+
 export default router;

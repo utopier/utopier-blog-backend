@@ -232,8 +232,10 @@
 - [O..] Get /user/followers Get User Followers
 - [O..] Get /user/followings Get User Followings
   상대방 User Data 정리(비번 등등)
+  DB Table Naming & Cloumn Naming
 
-- [] Get /user/{userId} Get User Data
+- [O..] Get /user/{userId} Get User Data
+  follow, followings User Data정리 (비번 등)
 
 - [] Get /user/{userId}/posts Get User PostList
 
