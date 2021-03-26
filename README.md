@@ -241,8 +241,8 @@
 
 2. Users
 
-- [] Get /users Get User List
-- [] Get /users/search Get User List
+- [O] Get /users Get User List
+- [O] Get /users/search Get User List
 
 3. Post
 
