@@ -776,5 +776,229 @@ router.get(
     }
   );
   
+/**
+ * @swagger
+ * /user/{userId}/follow:
+ *   patch:
+ *     summary: User Follow
+ *     description: User Follow
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *           example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+ *         required: true
+ *         description: follow userId
+ *     responses:
+ *       '201':
+ *         description: Unfollow Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ *       '403':
+ *         description: No Existing User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 없는 사람입니다
+ */
+ router.patch(
+    '/:userId/follow',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction) => {
+      // PATCH /user/{userId}/follow
+      // https://github.com/typeorm/typeorm/blob/master/docs/relational-query-builder.md
+      try {
+        const user: any = await User.find({
+          where: { id: +req.params.userId },
+        });
+        if (!user) {
+          res.status(403).send('없는 사람입니다');
+        }
+        const me: any = await User.findOne({ where: { id: req.user.id } });
+        console.log(`req.params.userId : ${req.params.userId}`);
+        // INSERT INTO user_followers_user (userId_1, userId_2) VALUES ('req.params.userId', 'req.user.id')
+        await User.createQueryBuilder()
+          .relation(User, 'followings')
+          .of(me.id)
+          .add(+req.params.userId);
+        res.status(201).json({ userId: req.params.userId });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /user/{userId}/follow:
+   *   delete:
+   *     summary: User Unfollow
+   *     description: User Unfollow
+   *     tags:
+   *       - User
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: userId
+   *         schema:
+   *           type: string
+   *           example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+   *         required: true
+   *         description: unfollow userId
+   *     responses:
+   *       '201':
+   *         description: Unfollow Success
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 userId:
+   *                   type: string
+   *                   example: 6e38a79f-26ee-4f71-bed8-dca9c22cd908
+   *       '400':
+   *         description: Bad Request
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: No Existing User
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 없는 사람입니다
+   */
+  router.delete(
+    '/:userId/follow',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // DELETE /user/{userId}/follow
+      try {
+        const user: any = await User.findOne({
+          where: { id: +req.params.userId },
+        });
+        if (!user) {
+          res.status(403).json('없는 사람입니다');
+        }
+        const me: any = await User.findOne({ where: { id: req.user.id } });
+        // INSERT INTO user_followers_user (userId_1, userId_2) VALUES ('req.params.userId', 'req.user.id')
+        await User.createQueryBuilder()
+          .relation(User, 'followings')
+          .of(me.id)
+          .remove(+req.params.userId);
+        res.status(201).json({ userId: req.params.userId });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  
+  /**
+   * @swagger
+   * /user/follower/{userId}:
+   *   delete:
+   *     summary: Delete User Follower
+   *     description: Delete User Follower
+   *     tags:
+   *       - User
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *       - in: path
+   *         name: userId
+   *         schema:
+   *           type: string
+   *           example: fab71182-ee85-4d37-a671-c7e582b32258
+   *     responses:
+   *       '200':
+   *         description: Deleted FollowUser
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 userId:
+   *                   type: string
+   *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+   *                   description: 삭제한 유저 ID
+   *       '400':
+   *         description: Bad Request
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: No Existing User
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 유저
+   */
+  router.delete(
+    '/follower/:userId',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // DELETE /user/follower/{userId}
+      try {
+        const user: any = await User.findOne({
+          where: { id: +req.params.userId },
+        });
+        if (!user) {
+          res.status(403).send('존재하지 않는 유저');
+        }
+        const me: any = await User.findOne({ where: { id: req.user.id } });
+        // DELETE FROM user_followers_user WHERE userId_1 = 'req.user.id' AND userId_2 = 'req.params.userId
+        await User.createQueryBuilder()
+          .relation(User, 'followers')
+          .of(me.id)
+          .remove(+req.params.userId);
+        res.status(200).json({ userId: req.params.userId });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
 
 export default router;

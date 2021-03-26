@@ -225,9 +225,10 @@
 - [O..] Post /user/images Update User Avatar
 - [O..] Delete /user/images Delete User Avatar
 
-- [] Patch /user/{userId}/follow User Follow
-- [] Delete /user/{userId}/follow User Unfollow
-- [] Delete /user/follower/{userId} Delete User Follwoer
+- [O] Patch /user/{userId}/follow User Follow
+- [O] Delete /user/{userId}/follow User Unfollow
+- [O] Delete /user/follower/{userId} Delete User Follwoer
+
 - [] Get /user/followers Get User Followers
 - [] Get /user/followings Get User Followings
 
@@ -266,3 +267,7 @@
 6. Subscription
 
 - [] Post /subscription
+
+---
+
+## Final Check
