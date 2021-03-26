@@ -229,8 +229,9 @@
 - [O] Delete /user/{userId}/follow User Unfollow
 - [O] Delete /user/follower/{userId} Delete User Follwoer
 
-- [] Get /user/followers Get User Followers
-- [] Get /user/followings Get User Followings
+- [O..] Get /user/followers Get User Followers
+- [O..] Get /user/followings Get User Followings
+  상대방 User Data 정리(비번 등등)
 
 - [] Get /user/{userId} Get User Data
 

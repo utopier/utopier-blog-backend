@@ -1000,5 +1000,149 @@ router.get(
     }
   );
   
-
+/**
+ * @swagger
+ * /user/followers:
+ *   get:
+ *     summary: Get User Followers
+ *     description: Get User Followers
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *     responses:
+ *       '200':
+ *         description: User Followers List
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+ *                 followers:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/responses/userFollowing'
+ *       '400':
+ *         description: Bad Request
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLogged In'
+ *       '403':
+ *         description: No Existing User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: 존재하지 않는 유저
+ */
+ router.get(
+    '/followers',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // GET /user/followers
+      try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        if (!user) {
+          res.status(403).send('존재하지 않는 유저');
+        }
+        const followers = await User.getRepository().find({
+          where: { id: req.user.id },
+          select: ['id'],
+          relations: ['followers'],
+          take: 10,
+        });
+        res.status(200).json({
+          userId: followers[0].id,
+          followers: followers[0].followers
+        });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  /**
+   * @swagger
+   * /user/followings:
+   *   get:
+   *     summary: Get User Followings
+   *     description: Get User Followings
+   *     tags:
+   *       - User
+   *     parameters:
+   *       - in: cookie
+   *         name: sessionId
+   *         schema:
+   *           type: string
+   *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+   *     responses:
+   *       '200':
+   *         description: User Followings List
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 userId:
+   *                   type: string
+   *                   example: fab71182-ee85-4d37-a671-c7e582b32258
+   *                 followings:
+   *                   type: array
+   *                   items:
+   *                     $ref: '#/components/responses/userFollowing'
+   *       '400':
+   *         description: Bad Request
+   *       '401':
+   *         description: Unauthorized
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/responses/isLoggedIn'
+   *       '403':
+   *         description: No Existing User
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: string
+   *               example: 존재하지 않는 유저
+   */
+  router.get(
+    '/followings',
+    isLoggedIn,
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+      // GET /user/follwings
+      try {
+        const user = await User.findOne({ where: { id: req.user.id } });
+        if (!user) {
+          res.status(403).send('존재하지 않는 유저');
+        }
+        const followings = await User.getRepository().find({
+          where: { id: req.user.id },
+          select: ['id'],
+          relations: ['followings'],
+          take: 10,
+        });
+        res.status(200).json({
+          userId:followings[0].id,
+          followings: followings[0].followings
+        });
+      } catch (error) {
+        console.error(error);
+        next(error);
+      }
+    }
+  );
+  
+  
 export default router;
