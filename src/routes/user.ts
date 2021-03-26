@@ -1,8 +1,7 @@
 import express, {Request, Response, NextFunction } from 'express';
 const router = express.Router();
-
 import bcrypt from 'bcrypt';
-
+import passport from 'passport';
 
 import { isLoggedIn, isNotLoggedIn } from '../utils/middlewares';
 
@@ -349,5 +348,102 @@ import User from '../entities/User'
     }
   );
   
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: user login
+ *     description: 유저 로그인
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       description: user data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/requestBody/loginUserData'
+ *     responses:
+ *       '200':
+ *         description: userData without password 
+ *         headers:
+ *           $ref: '#/components/headers/returnCookie'
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/userDataWithoutPassword'
+ *       '401':
+ *         description: unauthorized
+ *       '500':
+ *         description: internal server error
+ */
+ router.post('/login', isNotLoggedIn, async (req, res, next) => {
+    // POST /user/login
+    passport.authenticate('local', (err, user, info) => {
+      if (err) {
+        console.error(err);
+        return next(err);
+      }
+      if (info) {
+        return res.status(500).json(info.message);
+      }
+      return req.login(user, async (loginErr) => {
+        if (loginErr) {
+          console.error(loginErr);
+          return next(loginErr);
+        }
+        // SELECT id, email, nickname FROM user WHERE id = 'db16d68a-47c5-4362-8535-02ad9d2f5806'
+        const fullUserWithoutPassword = await User.getRepository().findOne({
+          where: { id: user.id },
+          select: ['id', 'email', 'nickname'],
+        });
+        return res.status(200).json(fullUserWithoutPassword);
+      });
+    })(req, res, next);
+  });
+  
+/**
+ * @swagger
+ * /user/logout:
+ *   post:
+ *     summary: logout
+ *     description: delete req.user & session destory
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: cookie
+ *         name: sessionId
+ *         schema:
+ *           type: string
+ *           example: sessionId=s%3AlXJNnVqS6yHMY-fgSoENMRf0V_zuNlfw.rtMVSGM7sISgHo
+ *     responses:
+ *       '200':
+ *         description: Logout User Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   description: Success
+ *                   example: success
+ *       '401':
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/isLoggedIn'
+ */
+ router.post('/logout', isLoggedIn, (req: any, res: Response) => {
+    // req.user 객체 제거
+    req.logout();
+    // session 객체 내용 제거
+    req.session.destroy();
+    // res.redirect('/');
+    res.status(200).json({
+      status:'success'
+    });
+  });
 
 export default router;

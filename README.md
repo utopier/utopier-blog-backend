@@ -215,8 +215,8 @@
 1. User
 
 - [O] Post /user Sign Up
-- [] Post /user/login login
-- [] Post /user/logout logout
+- [O] Post /user/login login
+- [O] Post /user/logout logout
 - [] Get /user Get Me Data
 - [] Patch /user/nickname Update User NickName
 - [] Patch /user/bio Update User bio
