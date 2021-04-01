@@ -197,9 +197,388 @@
 
 4. [] Auto Deploment with CircleCI, CodeDeploy, CodePipeline
 
-- [] CircleCI, S3, CodeDeploy, CodePipeLine, CloudWatch, SlackBot
-  - git push -> Github -> Git Clone -> CircleCI (git clone & build)
-  - CircleCI(Build & Upload) -> S3 -> Create Deployment -> CodeDeploy -> Deploy -> EC2
+- https://jojoldu.tistory.com/281?category=777282
+- [] EC2, S3, CodeDeploy, CodeBuild, CodePipeLine, CloudWatch, SlackBot
+- git push -> Github -> Git Clone -> CodeBuild -> CodeDeploy -> EC2
+- **Code Deploy**
+
+  1. [O] EC2 생성 및 IAM Role 생성
+
+  - AmazonS3FullAccess
+  - AWSCodeDeployFullAccess
+  - AWSCodeDeployRole
+  - CloudWatchLogsFullAccess
+  - CloudWatch 활성화
+  - Storage : 30GB
+  - 탄력적 IP 연결
+  - 키페어 다운 -> puttygen 으로 ppk 파일 생성 -> MobaXterm으로 접속
+
+  2. [O] EC2 패키지 설치
+
+  - nodejs
+    - curl -sL https://rpm.nodesource.com/setup_12.x | sudo bash -
+    - sudo yum install -y gcc-c++ make
+    - sudo yum install -y nodejs
+    - node -v
+    - which node
+  - npm
+    - npm -v
+    - which npm
+  - pm2
+
+    - https://computingforgeeks.com/install-pm2-node-js-process-manager-on-rhel-centos-8/
+    - sudo npm i -g pm2
+    - which pm2
+    - mkdir hello-world-nodejs
+    - cd hello-world-nodejs
+    - vi app.js
+
+      ```javascript
+      const http = require('http');
+
+      http
+        .createServer(function (request, response) {
+          response.writeHead(200, { 'Content-Type': 'text/plain' });
+          response.end('Hello, World!\n');
+        })
+        .listen(process.env.PORT);
+
+      console.log('App is running...');
+      ```
+
+    - pm2 start app.js
+    - pm2 list
+    - sudo pm2 monitor
+
+  - redis
+    - sudo yum install redis
+    - sudo systemctl start redis
+    - sudo systemctl enable redis
+    - sudo systemctl status redis
+    - sudo netstat -pnltu | grep redis
+    - ps -e
+    - ps -ef | grep redis
+    - redis-cli
+      - ping
+
+  3. [] EC2에 Code Deploy Agent 설치
+
+  - Code Deploy Agent용 사용자 추가
+    - EC2에서 AWS CLI를 사용하기 위해서
+  - AWS Console -> IAM -> 그룹생성
+    - 그룹 -> 권한 -> 인라인 정책 -> 사용자 지정 정책
+      ```json
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "autoscaling:*",
+              "codedeploy:*",
+              "ec2:*",
+              "lambda:*",
+              "elasticloadbalancing:*",
+              "s3:*",
+              "cloudwatch:*",
+              "logs:*",
+              "sns:*"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+      ```
+  - 사용자 추가 -> 프로그래밍 액세스 방식 -> 그룹에 사용자 추가 -> .csv 다운
+  - EC2에 Code Deploy Agent설치
+    - sudo npm i -g aws-cli
+    - aws configure
+    - sudo yum install -y wget
+    - sudo aws configure
+      - 이전에 생성한 사용자 액세스키, 시크릿키, 리전, json
+    - Agent 설치 파일 다운
+      - wget https://aws-codedeploy-ap-northeast-2.s3.amazonaws.com/latest/install
+      - chmod +x ./install (실행권한 추가)
+      - sudo yum install -y ruby
+      - sudo ./install auto (설치진행)
+      - sudo service codedeploy-agent status (Agent 실행확인)
+      - EC2 인스턴스 부팅시 자동 실행 설정
+        - sudo vim /etc/init.d/codedeploy-startup.sh
+          ```sh
+          #!/bin/bash
+          echo 'Starting codedeploy-agent'
+          sudo service codedeploy-agent restart
+          ```
+      - sudo chmod +x /etc/init.d/codedeploy-startup.sh ( 실행권한 추가)
+    - [O] 프로젝트 생성
+      - github repo에 프로젝트 생성
+      - appspec.yml 파일 추가
+        ```yml
+        version: 0.0
+        os: linux
+        files:
+          - source: /
+            destination: /home/ec2-user/build/
+        ```
+        - CodeBuild / S3 / Github 등을 통해 받은 전체 파일들을 /home/ec2-user/build로 옮김
+      - EC2에 /home/ec2-user/build 디렉토리 생성
+        - mkdir /home/ec2-user/build
+    - [] Code Deploy용 Role 생성
+    - [] Code Deploy 생성
+      - AWS Console -> AWS Code Deploy -> EC2 인스턴스 -> 서비스 역할(Code Deploy용 Role)
+    - [] Code Deploy 실행
+      - 배포 그룹 -> 작업 -> 새 계정 배포 -> Github 연결 -> 배포할 버전 커밋 ID 복사 -> Code Deploy에 등록
+
+- **Code Build**
+
+  1.  [] Code Build 구축
+
+  - CodeBuild -> 프로젝트 만들기 -> Github 연결
+  - 코드 빌드 2가지 방법
+    - buildspec.yml
+    - code build 편집창 커맨드
+  - 환경
+    - 런타임 버전
+    - 빌드 사양(buildspec.yml 사용)
+  - 아티팩트(빌드된 파일 보관 위치)
+    - S3 버킷
+  - 캐시
+    - 빌드에 필요한 의존성들 캐시
+    - S3에 올려놓고 빌드시 캐시
+  - IAM Role 생성
+
+  2. [] Code Build 실행
+
+  - 빌드 시작
+  - 프로젝트 root 위치에 buildspec.yml 추가
+
+    ```yml
+    version: 0.2
+
+    phases:
+      build:
+        commands:
+          - echo Build Starting on `date`
+          - chmod +x ./gradlew
+          - ./gradlew build
+      post_build:
+        commands:
+          - echo $(basename ./build/libs/*.jar)
+          - pwd
+
+    cache:
+      paths:
+        - '/root/.gradle/caches/**/*'
+    ```
+
+    - phases.build
+      - 프로젝트 빌드 시점
+      - chmod +x ./gradlew로 gradlew에 실행 권한 추가
+      - ./gradlew build로 build
+    - phases.post_build
+      - phases.build가 끝난 후에 실행되는 시점
+      - 빌드 결과물 노출시키는 명령어
+    - cache.paths
+      - S3에 캐시파일로 등록할 위치
+      - https://aws.amazon.com/ko/blogs/devops/how-to-enable-caching-for-aws-codebuild/
+
+  - 빌드 재시도 시 기존에 받던 의존성들 S3에서 파일을 받아 unzip하는지 확인
+
+- **Code Pipeline**
+
+  - Source(Github) -> Build(CodeBuild) -> Stating(CodeDeploy)
+
+  1. [] Code Pipeline 구축
+
+  - 파이프라인 생성 -> 이름 등록 -> Github 연결 -> 리포지토리, 브랜치, 실행 트리거 선택 -> 빌드 공급자 AWS CodeBuild -> 배포 공급자 AWS CodeDeploy -> IAM Role 생성
+  - 배포 전 bilud 디렉토리 비우기
+  - buildspec.yml(CodeBuild)
+
+    ```yml
+    version: 0.2
+
+    phases:
+      build:
+        commands:
+          - echo Build Starting on `date`
+          - chmod +x ./gradlew
+          - ./gradlew build
+      post_build:
+        commands:
+          - echo $(basename ./build/libs/*.jar)
+          - pwd
+
+    artifacts:
+      files:
+        - appspec.yml
+        - build/libs/*.jar
+      discard-paths: yes
+
+    cache:
+      paths:
+        - '/root/.gradle/caches/**/*'
+    ```
+
+    - artifacts.files
+      - S3에 업로드할 대상 지정
+      - 여기서 지정된 파일들이 zip파일로 S3에 업로드
+      - CodeBuild후 CodeDeploy 실행을 위해 appspec.yml 추가
+    - artifacts.discard-paths
+
+  - appspec.yml(CodeDeploy)
+
+    ```yml
+    version: 0.0
+    os: linux
+    files:
+      - source: /
+        destination: /home/ec2-user/build/
+
+    permissions:
+      - object: /
+        pattern: '**'
+        owner: ec2-user
+        group: ec2-user
+    ```
+
+    - permissions가 없으면 CodeDeploy로 전달되는 파일들의 사용자/그룹이 모두 root로 됨. ec2기본 사용자가 ec-user이기 때문에 배포파일들도 모두 ec2-user에 권한이 있도록 변경
+
+  - CodeDeploy -> 변경 사항 배포
+  - EC2에 접속해 build 디렉토리 호가인
+
+  2. [] Code Pipeline으로 프로젝트 실행
+
+  - 서버에 배포된 프로젝트 자동 실행 및 실행 체크
+  - scripts/deploy.sh
+    - 배포된 프로젝트 실행시킬 스크립트
+  - scripts/healthCheck.sh
+    - 프로젝트 실행 확인
+  - deploy.sh
+
+    ```sh
+    #!/bin/bash
+    BUILD_PATH=$(ls /home/ec2-user/build/*.jar)
+    JAR_NAME=$(basename $BUILD_PATH)
+    echo "> build 파일명: $JAR_NAME"
+
+    echo "> build 파일 복사"
+    DEPLOY_PATH=/home/ec2-user/
+    cp $BUILD_PATH $DEPLOY_PATH
+
+    echo "> springboot-deploy.jar 교체"
+    CP_JAR_PATH=$DEPLOY_PATH$JAR_NAME
+    APPLICATION_JAR_NAME=springboot-deploy.jar
+    APPLICATION_JAR=$DEPLOY_PATH$APPLICATION_JAR_NAME
+
+    ln -Tfs $CP_JAR_PATH $APPLICATION_JAR
+
+    echo "> 현재 실행중인 애플리케이션 pid 확인"
+    CURRENT_PID=$(pgrep -f $APPLICATION_JAR_NAME)
+
+    if [ -z $CURRENT_PID ]
+    then
+      echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
+    else
+      echo "> kill -15 $CURRENT_PID"
+      kill -15 $CURRENT_PID
+      sleep 5
+    fi
+
+    echo "> $APPLICATION_JAR 배포"
+    nohup java -jar $APPLICATION_JAR > /dev/null 2> /dev/null < /dev/null &
+    ```
+
+  - healthCheck.sh
+
+    ```sh
+    #!/bin/bash
+    echo "> Health check 시작"
+    echo "> curl -s http://localhost:8080/actuator/health "
+
+    for RETRY_COUNT in {1..15}
+    do
+      RESPONSE=$(curl -s http://localhost:8080/actuator/health)
+      UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
+
+      if [ $UP_COUNT -ge 1 ]
+      then # $up_count >= 1 ("UP" 문자열이 있는지 검증)
+          echo "> Health check 성공"
+          break
+      else
+          echo "> Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다."
+          echo "> Health check: ${RESPONSE}"
+      fi
+
+      if [ $RETRY_COUNT -eq 10 ]
+      then
+        echo "> Health check 실패. "
+        exit 1
+      fi
+
+      echo "> Health check 연결 실패. 재시도..."
+      sleep 10
+    done
+    exit 0
+    ```
+
+  - 2개의 스크립트 실행시점 appspec.yml에 설정
+
+    ```yml
+    version: 0.0
+    os: linux
+    files:
+      - source: /
+        destination: /home/ec2-user/build/
+
+    permissions:
+      - object: /
+        pattern: '**'
+        owner: ec2-user
+        group: ec2-user
+
+    hooks:
+      ApplicationStart:
+        - location: deploy.sh
+          timeout: 60
+          runas: ec2-user
+      ValidateService:
+        - location: healthCheck.sh
+          timeout: 60
+          runas: ec2-user
+    ```
+
+  - scripts 디렉토리 CodeBuild 대상에 포함되도록 buildspec.yml 수정
+
+    ```yml
+    version: 0.2
+
+    phases:
+      build:
+        commands:
+          - echo Build Starting on `date`
+          - chmod +x ./gradlew
+          - ./gradlew build
+      post_build:
+        commands:
+          - echo $(basename ./build/libs/*.jar)
+          - pwd
+
+    artifacts:
+      files:
+        - appspec.yml
+        - build/libs/*.jar
+        - scripts/**
+      discard-paths: yes
+
+    cache:
+      paths:
+        - '/root/.gradle/caches/**/*'
+    ```
+
+  - git push -> CodePipeline 재배포
+  - EC2에서 프로젝트 실행확인
+
+5. API Gateway EC2에 연결
 
 ## 6. CICD Pipeline
 
@@ -284,3 +663,10 @@
 ---
 
 ## Final Check
+
+- [] Swagger
+- [] API Test(Postman - MySQL Workbench - Wireshark - Jest - Swagger)
+- [] CICD(Build, Test, Deploy)
+- [] Refactoring
+- [] Performance
+- [] Security

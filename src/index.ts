@@ -10,7 +10,7 @@ import connectRedis from 'connect-redis';
 const RedisStore = connectRedis(session);
 import redis from 'redis';
 
-import passportConfig from './utils/passport';``
+import passportConfig from './utils/passport';
 
 import {createConnection} from 'typeorm'
 
@@ -22,6 +22,7 @@ import usersRouter from './routes/users';
 import postRouter from './routes/post';
 import postsRouter from './routes/posts';
 import tagsRouter from './routes/tags';
+// import subscriptionRouter from './routes/subscription';
 
 import dotenv from 'dotenv';
 dotenv.config({ path: __dirname + '/../.env' });
@@ -157,6 +158,7 @@ app.use('/users', usersRouter);
 app.use('/post', postRouter);
 app.use('/posts', postsRouter);
 app.use('/tags', tagsRouter);
+// app.use('/subscription', subscriptionRouter);
 
 const server = app.listen(2025, () => {
   console.log(`server start`);
