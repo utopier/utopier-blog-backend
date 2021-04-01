@@ -1,15 +1,21 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo Insatlling NPM Packages and wget Enviorment File
+      - npm install
+      - npm install babel-cli cross-env --global
+  pre_build:
+    commands:
+      - echo Nothing to do in the pre_build phase...
   build:
     commands:
-      - echo Build Starting on `date`
-      - sudo npm run build
+      - echo Build started on `date`
+      - npm run build
   post_build:
     commands:
-      - echo $(basename ./build/libs/*.jar)
-      - pwd
-
+      - echo Nothing to do in the post_build phase...
 cache:
   paths:
     - './node_modules/**/*'

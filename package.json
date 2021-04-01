@@ -5,7 +5,9 @@
   "main": "index.ts",
   "scripts": {
     "dev": "cd src && nodemon --exec ts-node index.ts",
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest --detectOpenHandles --forceExit",
+    "build": "tsc -p .",
+    "start": "ts-node dist/src/index.js"
   },
   "jest": {
     "transform": {
