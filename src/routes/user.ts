@@ -480,7 +480,7 @@ import Image from '../entities/Image';
 router.get(
   '/',
   isLoggedIn,
-  async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  async (req: any, res: Response, next: NextFunction): Promise<any> => {
     // GET /user
     try {
       if (req.user) {
@@ -759,7 +759,7 @@ router.get(
           Bucket: 'utopier-blog-dev-storage', // 사용자 버켓 이름
           Key: req.query.imgPath, // 버켓 내 경로
         },
-        (err, data) => {
+        (err:any, data:any) => {
           if (err) {
             throw err;
           }

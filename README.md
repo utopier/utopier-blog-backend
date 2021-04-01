@@ -395,7 +395,7 @@
 
   - Source(Github) -> Build(CodeBuild) -> Stating(CodeDeploy)
 
-  1. [] Code Pipeline 구축
+  1. [O] Code Pipeline 구축
 
   - 파이프라인 생성 -> 이름 등록 -> Github 연결 -> 리포지토리, 브랜치, 실행 트리거 선택 -> 빌드 공급자 AWS CodeBuild -> 배포 공급자 AWS CodeDeploy -> IAM Role 생성
   - 배포 전 bilud 디렉토리 비우기
@@ -585,7 +585,7 @@
   - git push -> CodePipeline 재배포
   - EC2에서 프로젝트 실행확인
 
-5. API Gateway EC2에 연결
+5. [] API Gateway EC2에 연결
 
 ## 6. CICD Pipeline
 

@@ -32,16 +32,16 @@ router.post('/', isLoggedIn, async (req: any, res, next) => {
   const result = await isValidSaveRequest(req, res);
   console.log(req.body.user);
   console.log(req.body.endpoint);
-//   const newSubscription = await Subscription.insert({
-//     endpoint: req.body.endpoint,
-//     expirationTime: req.body.expirationTime,
-//     keys: JSON.stringify(req.body.keys),
-//   });
-  await User.createQueryBuilder()
-    .relation(User, 'subscription')
-    .of(req.user.id)
-    .set(newSubscription.identifiers[0].id);
-  res.setHeader('Content-Type', 'application/json');
+  // const newSubscription = await Subscription.insert({
+  //   endpoint: req.body.endpoint,
+  //   expirationTime: req.body.expirationTime,
+  //   keys: JSON.stringify(req.body.keys),
+  // });
+  // await User.createQueryBuilder()
+  //   .relation(User, 'subscription')
+  //   .of(req.user.id)
+  //   .set(newSubscription.identifiers[0].id);
+  // res.setHeader('Content-Type', 'application/json');
   res.send({ data: { success: true } });
 });
 
