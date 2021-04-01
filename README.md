@@ -323,10 +323,12 @@
         - CodeBuild / S3 / Github 등을 통해 받은 전체 파일들을 /home/ec2-user/build로 옮김
       - EC2에 /home/ec2-user/build 디렉토리 생성
         - mkdir /home/ec2-user/build
-    - [] Code Deploy용 Role 생성
-    - [] Code Deploy 생성
-      - AWS Console -> AWS Code Deploy -> EC2 인스턴스 -> 서비스 역할(Code Deploy용 Role)
-    - [] Code Deploy 실행
+    - [O] Code Deploy용 Role 생성
+      - IAM -> 역할 만들기 -> CodeDeploy -> AWSCodeDeployRole 
+    - [O] Code Deploy 생성
+      - AWS Console -> AWS Code Deploy -> 애플리케이션 생성 -> EC2 인스턴스 -> 서비스 역할(Code Deploy용 Role)
+      - 배포 그룹 생성
+    - [O] Code Deploy 실행
       - 배포 그룹 -> 작업 -> 새 계정 배포 -> Github 연결 -> 배포할 버전 커밋 ID 복사 -> Code Deploy에 등록
 
 - **Code Build**
