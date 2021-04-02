@@ -27,8 +27,10 @@ phases:
       - find . -name 'node_modules'
 artifacts:
   files:
-    - '**/*'
-  discard-paths: yes
+    - appspec.yml
+    - dist/src/**/*
+    - node_modules/**/*
+  discard-paths: no
 cache:
   paths:
     - 'node_modules/**/*'
