@@ -11,8 +11,7 @@ phases:
   pre_build:
     commands:
       - echo Nothing to do in the pre_build phase...
-      - find ./ name dist -type d
-
+      - pwd
   build:
     commands:
       - echo Build started on `date`
