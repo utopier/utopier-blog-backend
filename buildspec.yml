@@ -11,7 +11,7 @@ phases:
   pre_build:
     commands:
       - echo Nothing to do in the pre_build phase...
-      - find ./name dist -type d
+      - find ./ name dist -type d
 
   build:
     commands:
@@ -20,7 +20,7 @@ phases:
   post_build:
     commands:
       - echo Nothing to do in the post_build phase...
-      - find ./name dist -type d
+      - find ./ name dist -type d
 artifacts:
   files:
     - appspec.yml
