@@ -28,6 +28,9 @@ phases:
 artifacts:
   files:
     - appspec.yml
+    - package.json
+    - '@types/index.d.ts'
+    - appStart.sh
     - dist/src/**/*
     - node_modules/**/*
   discard-paths: no
