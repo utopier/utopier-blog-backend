@@ -20,7 +20,7 @@ phases:
       - echo Nothing to do in the post_build phase...
 artifacts:
   files:
-    - appsepc.yml
+    - appspec.yml
     - dist/*
     - package.json
     - node_modules/**/*
