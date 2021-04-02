@@ -19,8 +19,8 @@ phases:
 artifacts:
   files:
     - appspec.yml
-    - dist/**/*
+    - dist/*
   discard-paths: yes
 cache:
   paths:
-    - './node_modules/**/*'
+    - './node_modules/*'
