@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # node 프로세스 PID 확인 : pgrep node
-CURRENT_PID = $(pgrep node)
-echo "Node Process PID 확인 : ${CURRENT_PID}"
+CURRENT_PID=$(pgrep -f node)
+echo "Node Process PID 확인 : $CURRENT_PID"
 
 # process kill : kill -9 processid
 echo "Current Node Process Kill"
