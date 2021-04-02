@@ -2,6 +2,8 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 12
     commands:
       - echo Insatlling NPM Packages and wget Enviorment File
       - npm install
@@ -18,8 +20,11 @@ phases:
       - echo Nothing to do in the post_build phase...
 artifacts:
   files:
-    - '**/*'
+    - appsepc.yml
+    - dist/*
+    - package.json
+    - node_modules/**/*
   discard-paths: yes
 cache:
   paths:
-    - './node_modules/**/*'
+    - 'node_modules/**/*'
