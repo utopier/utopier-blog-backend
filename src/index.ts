@@ -61,8 +61,6 @@ const options: swaggerJSDoc.Options = {
 const swaggerSpec = swaggerJSDoc(options);
 
 
-const connectionOptions = require('./ormconfig');
-
 // Redis 연결
 export const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
@@ -73,8 +71,19 @@ export const redisClient = redis.createClient({
 console.log(redisClient)
 
 // MySQL 연결
-// const connection = await createConnection(connectionOptions)
-createConnection(connectionOptions)
+createConnection({
+  type:"mysql",
+  host:process.env.DB_ENDPOINT,
+  port:3306,
+  username:process.env.DB_USERNAME,
+  password:process.env.DB_PASSWORD,
+  database:"blogdb",
+  entities:[
+    "entities/**/*.*"
+  ],
+  synchronize: true,
+  logging: true
+})
   .then(() => {
     console.log('MySQL 연결 성공');
   })
