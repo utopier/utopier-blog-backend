@@ -594,6 +594,8 @@
 3. []CircleCI + Slack
 4. []CircleCI + JIRA
 
+## [] API Gateway + EC2
+
 ---
 
 ## API Features
@@ -669,11 +671,14 @@
 
 ---
 
-## Final Check
+## Prod & Dev Final Check
 
-- [] Swagger
-- [] API Test(Postman - MySQL Workbench - Wireshark - Jest - Swagger)
+- [] Jest Auto Test
+
+- [] Swagger & Rest API Design & Refactoring
+- [] API Auto Test(Swagger - Postman - DBTools(MySQL,Redis) - Wireshark - Jest)
 - [] CICD(Build, Test, Deploy)
-- [] Refactoring
-- [] Performance
-- [] Security
+
+- [] Subscription API
+
+- [] API Gateway(Http, Https, ws,wss)

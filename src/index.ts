@@ -10,6 +10,8 @@ import connectRedis from 'connect-redis';
 const RedisStore = connectRedis(session);
 import redis from 'redis';
 
+import socketio from 'socket.io';
+
 import passportConfig from './utils/passport';
 
 import {createConnection} from 'typeorm'
@@ -171,4 +173,39 @@ app.use('/tags', tagsRouter);
 
 const server = app.listen(2025, () => {
   console.log(`server start`);
+});
+
+const io = socketio(server);
+
+let chatUsers: any[] = [];
+
+io.on('connection', (socket) => {
+  console.log('connected');
+  console.log('connected socket object : ', socket);
+  console.log('connected socket id : ',socket.conn.id)
+  socket.on('message', (data) => {
+    console.log(data);
+    io.emit('message', data);
+  });
+  socket.on('join', (data) => {
+    chatUsers.push({socketId:socket.id,...data});
+    console.log('join : ', data);
+    console.log('join chatUser :', chatUsers);
+    io.emit('join', { data, chatUsers });
+  });
+  socket.on('leave', (data) => {
+    chatUsers = chatUsers.filter(({ nickname }) => nickname !== data.nickname);
+    console.log('leave : ', data);
+    console.log('leave chatUser :', chatUsers);
+    socket.broadcast.emit('leave', { data, chatUsers });
+  });
+  // browser 창 닫을시
+  socket.on('disconnect', () => {
+    console.log('disconnect');
+    console.log('disconnect socket id : ', socket.id);
+    const disconnectedSocketId = socket.id;
+    chatUsers = chatUsers.filter(({ socketId }) => socketId !== socket.id);
+    console.log('disconnected chatUsers : ', chatUsers);
+    socket.broadcast.emit('disconnectEvt', { disconnectedSocketId,  chatUsers });
+  })
 });
