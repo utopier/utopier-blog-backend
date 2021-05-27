@@ -324,7 +324,7 @@
       - EC2에 /home/ec2-user/build 디렉토리 생성
         - mkdir /home/ec2-user/build
     - [O] Code Deploy용 Role 생성
-      - IAM -> 역할 만들기 -> CodeDeploy -> AWSCodeDeployRole 
+      - IAM -> 역할 만들기 -> CodeDeploy -> AWSCodeDeployRole
     - [O] Code Deploy 생성
       - AWS Console -> AWS Code Deploy -> 애플리케이션 생성 -> EC2 인스턴스 -> 서비스 역할(Code Deploy용 Role)
       - 배포 그룹 생성
@@ -333,7 +333,7 @@
 
 - **Code Build**
 
-  1.  [] Code Build 구축
+  1.  [O] Code Build 구축
 
   - CodeBuild -> 프로젝트 만들기 -> Github 연결
   - 코드 빌드 2가지 방법
@@ -349,7 +349,7 @@
     - S3에 올려놓고 빌드시 캐시
   - IAM Role 생성
 
-  2. [] Code Build 실행
+  2. [O] Code Build 실행
 
   - 빌드 시작
   - 프로젝트 root 위치에 buildspec.yml 추가
@@ -358,19 +358,24 @@
     version: 0.2
 
     phases:
+      install:
+        commands:
+          - echo Insatlling NPM Packages and wget Enviorment File
+          - npm install
+          - npm install babel-cli cross-env --global
+      pre_build:
+        commands:
+          - echo Nothing to do in the pre_build phase...
       build:
         commands:
-          - echo Build Starting on `date`
-          - chmod +x ./gradlew
-          - ./gradlew build
+          - echo Build started on `date`
+          - npm run build
       post_build:
         commands:
-          - echo $(basename ./build/libs/*.jar)
-          - pwd
-
+          - echo Nothing to do in the post_build phase...
     cache:
       paths:
-        - '/root/.gradle/caches/**/*'
+        - './node_modules/**/*'
     ```
 
     - phases.build
@@ -390,7 +395,7 @@
 
   - Source(Github) -> Build(CodeBuild) -> Stating(CodeDeploy)
 
-  1. [] Code Pipeline 구축
+  1. [O] Code Pipeline 구축
 
   - 파이프라인 생성 -> 이름 등록 -> Github 연결 -> 리포지토리, 브랜치, 실행 트리거 선택 -> 빌드 공급자 AWS CodeBuild -> 배포 공급자 AWS CodeDeploy -> IAM Role 생성
   - 배포 전 bilud 디렉토리 비우기
@@ -580,7 +585,7 @@
   - git push -> CodePipeline 재배포
   - EC2에서 프로젝트 실행확인
 
-5. API Gateway EC2에 연결
+5. [] API Gateway EC2에 연결
 
 ## 6. CICD Pipeline
 
@@ -588,6 +593,8 @@
 2. []CircleCI + Github
 3. []CircleCI + Slack
 4. []CircleCI + JIRA
+
+## [] API Gateway + EC2
 
 ---
 
@@ -664,11 +671,14 @@
 
 ---
 
-## Final Check
+## Prod & Dev Final Check
 
-- [] Swagger
-- [] API Test(Postman - MySQL Workbench - Wireshark - Jest - Swagger)
+- [] Jest Auto Test
+
+- [] Swagger & Rest API Design & Refactoring
+- [] API Auto Test(Swagger - Postman - DBTools(MySQL,Redis) - Wireshark - Jest)
 - [] CICD(Build, Test, Deploy)
-- [] Refactoring
-- [] Performance
-- [] Security
+
+- [] Subscription API
+
+- [] API Gateway(Http, Https, ws,wss)

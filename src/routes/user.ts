@@ -480,7 +480,7 @@ import Image from '../entities/Image';
 router.get(
   '/',
   isLoggedIn,
-  async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  async (req: any, res: Response, next: NextFunction): Promise<any> => {
     // GET /user
     try {
       if (req.user) {
