@@ -102,8 +102,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
   app.use(
     cors({
-      // origin: '',
-      // credentials: true,
+      origin: true,
+      credentials: true,
     })
   );
 } else {
