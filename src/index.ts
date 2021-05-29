@@ -81,7 +81,7 @@ createConnection({
   password:process.env.DB_PASSWORD,
   database:"blogdb",
   entities:[
-    "entities/**/*.*"
+    __dirname +"/entities/*{.ts,.js}"
   ],
   synchronize: true,
   logging: true
