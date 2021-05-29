@@ -102,7 +102,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
   app.use(
     cors({
-      origin: true,
+      origin: "https://dpgo1646nlu9v.cloudfront.net",
       credentials: true,
     })
   );
