@@ -58,7 +58,7 @@ const options: swaggerJSDoc.Options = {
     },
   },
   // Path to the API docs
-  apis: ['./routes/*.*']
+  apis: [__dirname + '/routes/*{.ts,.js}']
 };
 const swaggerSpec = swaggerJSDoc(options);
 
@@ -134,9 +134,10 @@ app.use(
     store: new RedisStore({ client: redisClient }),
     cookie: {
       httpOnly: true,
-      secure: false,
-      // domain: process.env.NODE_ENV === 'production' && '.nodebird.com',
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      domain: process.env.NODE_ENV === 'production' ? '.dpgo1646nlu9v.cloudfront.net': undefined,
       expires: new Date(new Date().getTime() + 86400000),
+      sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined
     },
   })
 );
