@@ -137,7 +137,7 @@ app.use(
       secure: process.env.NODE_ENV === 'production' ? true : false,
       domain: process.env.NODE_ENV === 'production' ? '.dpgo1646nlu9v.cloudfront.net': undefined,
       expires: new Date(new Date().getTime() + 86400000),
-      sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined
+      // sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined
     },
   })
 );

@@ -906,6 +906,7 @@ router.get(
     async (req: any, res: Response, next: NextFunction): Promise<any> => {
       // DELETE /user/{userId}/follow
       try {
+        console.log(req.params);
         const user: any = await User.findOne({
           where: { id: +req.params.userId },
         });

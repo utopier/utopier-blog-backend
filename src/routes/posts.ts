@@ -188,10 +188,15 @@ router.get(
   async (req: any, res: Response, next: NextFunction): Promise<any> => {
     // GET /posts
     try {
+      console.log("req.query.lastId : ",req.query.lastId)
+      console.log("req.query.orderBy : ", req.query.orderBy)
+      console.log("req.query.popular : ", req.query.popular)
+      console.log("req.query.searchQuery : ",req.query.searchQuery)
       let skipNum;
       if (parseInt(req.query.lastId, 10)) {
         skipNum = parseInt(req.query.lastId, 10);
       }
+      console.log("skipNum : ", skipNum);
       const posts = await Post.findAndCount({
         relations: [
           'mainImgUrl',
@@ -203,14 +208,15 @@ router.get(
         ],
         order: {
           createdDate: req.query.orderBy !== 0 ? req.query.orderBy : undefined,
-          //likers: req.query.popular !== 0 ? req.query.popular : undefined,
+          likers: req.query.popular !== 0 ? req.query.popular : undefined,
         },
         skip: skipNum,
         take: 10,
       });
       let filtering =
         !!req.query.orderBy || !!req.query.popular || !!req.query.searchQuery;
-      res
+      console.log('filtering : ', filtering);
+        res
         .status(200)
         .json({ posts: posts[0], postsCount: posts[1], filtering, skipNum });
     } catch (error) {
