@@ -102,7 +102,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(helmet());
   app.use(
     cors({
-      origin: "https://dpgo1646nlu9v.cloudfront.net",
+      origin: "https://utopier-blog-frontend.vercel.app",
       credentials: true,
     })
   );
@@ -135,7 +135,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
-      domain: process.env.NODE_ENV === 'production' ? '.dpgo1646nlu9v.cloudfront.net': undefined,
+      domain: process.env.NODE_ENV === 'production' ? '.utopier-blog-frontend.vercel.app': undefined,
       expires: new Date(new Date().getTime() + 86400000),
       sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined
     },
