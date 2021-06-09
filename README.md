@@ -33,7 +33,7 @@
 
   - **CICD Tool** : AWS CodePipeline
   - **Cloud Service Provider** : AWS
-  - **AWS Resources** : EC2(Linux, Redis), RDS, API Gateway, IAM
+  - **AWS Resources** : EC2(Linux, Nginx, Redis), RDS, IAM
 
   - **VCS(Virsion Contol System)** : git, sourcetree
   - **Branch Management** : git-flow
