@@ -29,6 +29,7 @@ class Subscription extends BaseEntity {
   @Column({ type: 'boolean', nullable: true })
   expirationTime: boolean;
 
+// [TODO] : Subscription Push Message
 //   @Column({ type: 'json', nullable: true })
 //   keys: Json;
 

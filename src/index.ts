@@ -1,3 +1,4 @@
+// Refactoring - 1
 import express from 'express';
 import logger from 'morgan';
 import hpp from 'hpp';
@@ -24,6 +25,7 @@ import usersRouter from './routes/users';
 import postRouter from './routes/post';
 import postsRouter from './routes/posts';
 import tagsRouter from './routes/tags';
+// [TODO] : Post Suscription
 // import subscriptionRouter from './routes/subscription';
 
 import dotenv from 'dotenv';
@@ -37,7 +39,7 @@ const options: swaggerJSDoc.Options = {
     info: { // API informations (required)
       title: 'Utopier Blog API', // Title (required)
       version: '1.0.0', // Version (required)
-      description: "Blog API | email : utopier2025@gmail.com | github : ...", // Description (optional)
+      description: "Blog API | email : utopier2025@gmail.com | github : https://www.github.com/utopier", // Description (optional)
     },
     host: 'localhost:2025', // Host (optional)
     basePath: '/', // Base path (optional)
@@ -47,7 +49,7 @@ const options: swaggerJSDoc.Options = {
         description: "Local Development Environment"
       },
       {
-        url:"https://utopier.ml",
+        url:"https://www.utopier.com",
         description: "AWS EC2"
       }
     ],
@@ -69,8 +71,6 @@ export const redisClient = redis.createClient({
   port: 6379,
   password: process.env.REDIS_PASSWORD
 });
-
-console.log(redisClient)
 
 // MySQL 연결
 createConnection({
@@ -124,23 +124,29 @@ app.use(
 );
 // parse application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(cookieParser('Rs89I67YEA55cLMgi0t6oyr8568e6KtD'));
+app.use(cookieParser(process.env.APP_COOKIE_SECRET));
 app.use(
   session({
-    secret: 'Rs89I67YEA55cLMgi0t6oyr8568e6KtD',
+    secret: (process.env.APP_COOKIE_SECRET as string),
     resave: false,
     saveUninitialized: true,
     name: 'sessionId',
     store: new RedisStore({ client: redisClient }),
     cookie: {
+      //  [ISSUE] :Chrome SecCookie Blocked Issue
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' ? true : false,
       domain: process.env.NODE_ENV === 'production' ? '.utopier-blog-frontend.vercel.app': undefined,
-      expires: new Date(new Date().getTime() + 86400000),
-      sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined
+      sameSite:process.env.NODE_ENV === 'production' ? 'none' : undefined,
+      maxAge: 1000 * 60 * 60 * 48
     },
   })
 );
+
+// [ISSUE] : Chrome SetCookie Blocked Issue
+if(process.env.NODE_ENV === 'production'){
+  app.set('trust proxy', 1);
+}
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -170,6 +176,7 @@ app.use('/users', usersRouter);
 app.use('/post', postRouter);
 app.use('/posts', postsRouter);
 app.use('/tags', tagsRouter);
+// [TODO] : Post Suscription Push Message
 // app.use('/subscription', subscriptionRouter);
 
 const server = app.listen(2025, () => {
