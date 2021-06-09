@@ -1,6 +1,6 @@
 # Blog Backend
 
-- **URL** : https://lwdc6kzck0.execute-api.ap-northeast-2.amazonaws.com/api-docs/
+- **URL** : https://www.utopier-api.com/api-docs
 - **Feature Video List** : https://www.youtube.com/playlist?list=PLshiIDc3Xos0TVOANMYGLDr7mtmheA3J8
 - **Repository**
   - Frontend Repository : https://github.com/utopier/utopier-blog-frontend
