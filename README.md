@@ -1,6 +1,4 @@
 # Blog Backend
-
-- **URL** : https://www.utopier-api.com/api-docs
 - **Feature Video List** : https://www.youtube.com/playlist?list=PLshiIDc3Xos0TVOANMYGLDr7mtmheA3J8
 - **Repository**
   - Frontend Repository : https://github.com/utopier/utopier-blog-frontend
